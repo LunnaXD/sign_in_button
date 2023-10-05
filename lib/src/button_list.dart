@@ -1,13 +1,11 @@
 /// This is a list of all the library built buttons.
-enum Buttons {
+enum SocialButton {
   email,
   google,
-  googleDark,
   facebook,
   facebookNew,
   gitHub,
   apple,
-  appleDark,
   linkedIn,
   pinterest,
   tumblr,

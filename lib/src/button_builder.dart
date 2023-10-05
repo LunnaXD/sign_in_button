@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:sign_in_button/src/button_type.dart';
+
+import 'package:sign_in_button/src/dimens.dart';
 
 @immutable
 class SignInButtonBuilder extends StatelessWidget {
   /// This is a builder class for signin button
   ///
-  /// Icon can be used to define the signin method
-  /// User can use Flutter built-in Icons or font-awesome flutter's Icon
-  final IconData? icon;
-
-  /// Override the icon section with a image logo
-  /// For example, Google requires a colorized logo,
-  /// which FontAwesome cannot display. If both image
-  /// and icon are provided, image will take precedence
-  final Widget? image;
 
   /// `mini` tag is used to switch from a full-width signin button to
   final bool mini;
@@ -20,131 +14,238 @@ class SignInButtonBuilder extends StatelessWidget {
   /// the button's text
   final String text;
 
-  /// The size of the label font
-  final double fontSize;
+  final Color? lightTextColor;
+  final Color? darkTextColor;
 
-  /// backgroundColor is required but textColor is default to `Colors.white`
-  /// splashColor is default to `Colors.white30`
-  final Color textColor;
-  final Color iconColor;
-  final Color backgroundColor;
-  final Color splashColor;
-  final Color highlightColor;
+  /// NOTE: Both [image] and [icon] can be added
+  /// but [image] will take preference over [icon]
+  final IconData? icon;
+  final String? imageLightTheme;
+  final String? imageDarkTheme;
+
+  final double imageSize;
+
+  /// backgroundColor
+  final Color lightBackgroundColor;
+  final Color darkBackgroundColor;
 
   /// onPressed should be specified as a required field to indicate the callback.
   final Function onPressed;
 
-  /// padding is default to `EdgeInsets.all(3.0)`
-  final EdgeInsets? padding;
-  final EdgeInsets? innerPadding;
+  /// To enable a button, set its value to "true".
+  /// To disable a button, set its value to "false".
+  ///
+  /// This property is true by default.
+  final bool enabled;
 
-  /// shape is to specify the custom shape of the widget.
-  /// However the flutter widgets contains restriction or bug
-  /// on material button, hence, comment out.
-  final ShapeBorder? shape;
+  /// corner radius of button
+  final double radiusButton;
 
-  /// elevation has default value of 2.0
-  final double elevation;
-
-  /// the height of the button
-  final double? height;
-
-  /// width is default to be 1/1.5 of the screen
-  final double? width;
+  /// button type: elevated, filled, outlined
+  final ButtonType buttonType;
 
   /// {@macro flutter.material.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none], and must not be null.
   final Clip clipBehavior;
 
-  /// The constructor is self-explanatory.
+  /// padding is default to `EdgeInsets.all(4.0)`
+  final double padding;
+
+  /// width is default is 172px
+  final double? width;
+
   const SignInButtonBuilder({
     Key? key,
-    required this.backgroundColor,
-    required this.onPressed,
-    required this.text,
-    this.icon,
-    this.image,
-    this.fontSize = 14.0,
-    this.textColor = Colors.white,
-    this.iconColor = Colors.white,
-    this.splashColor = Colors.white30,
-    this.highlightColor = Colors.white30,
-    this.padding,
-    this.innerPadding,
     this.mini = false,
-    this.elevation = 2.0,
-    this.shape,
-    this.height,
-    this.width,
+    required this.text,
+    this.lightTextColor,
+    this.darkTextColor,
+    this.icon,
+    this.imageLightTheme,
+    this.imageDarkTheme,
+    double? imageSize,
+    required this.lightBackgroundColor,
+    Color? darkBackgroundColor,
+    required this.onPressed,
+    bool? enabled,
+    double? radiusButton,
     this.clipBehavior = Clip.none,
-  }) : super(key: key);
+    double? padding,
+    this.width,
+    ButtonType? buttonType,
+  })  : enabled = enabled ?? true,
+        imageSize = imageSize ?? Dimens.imageSize,
+        buttonType = buttonType ?? ButtonType.filled,
+        radiusButton = radiusButton ?? Dimens.cornerRadiusButton,
+        darkBackgroundColor = darkBackgroundColor ?? lightBackgroundColor,
+        padding = padding ?? Dimens.paddingButton,
+        assert(
+        imageLightTheme != null || imageDarkTheme != null || icon != null,
+        ),
+        super(key: key);
 
-  /// The build function will be help user to build the signin button widget.
   @override
   Widget build(BuildContext context) {
-    return MaterialButton(
-      key: key,
-      minWidth: mini ? width ?? 35.0 : null,
-      height: height,
-      elevation: elevation,
-      padding: padding ?? EdgeInsets.zero,
-      color: backgroundColor,
-      onPressed: onPressed as void Function()?,
-      splashColor: splashColor,
-      highlightColor: highlightColor,
-      shape: shape ?? ButtonTheme.of(context).shape,
-      clipBehavior: clipBehavior,
-      child: _getButtonChild(context),
+    final theme = Theme.of(context);
+    final isLightTheme = theme.brightness == Brightness.light;
+
+    switch (buttonType) {
+      case ButtonType.filled:
+        return FilledButton.tonal(
+          key: key,
+          onPressed: enabled ? onPressed as void Function()? : null,
+          clipBehavior: clipBehavior,
+          style: FilledButton.styleFrom(
+            minimumSize: _minimumSize(),
+            shape: _buttonShape(),
+            padding: _buttonPadding(),
+            backgroundColor: _buttonBackgroundColor(isLightTheme),
+          ),
+          child: _contentButton(theme),
+        );
+      case ButtonType.elevated:
+        return ElevatedButton(
+          key: key,
+          onPressed: enabled ? onPressed as void Function()? : null,
+          clipBehavior: clipBehavior,
+          style: ElevatedButton.styleFrom(
+            minimumSize: _minimumSize(),
+            shape: _buttonShape(),
+            padding: _buttonPadding(),
+            backgroundColor: _buttonBackgroundColor(isLightTheme),
+          ),
+          child: _contentButton(theme),
+        );
+      case ButtonType.outlined:
+        return OutlinedButton(
+          key: key,
+          onPressed: enabled ? onPressed as void Function()? : null,
+          clipBehavior: clipBehavior,
+          style: ElevatedButton.styleFrom(
+            minimumSize: _minimumSize(),
+            shape: _buttonShape(),
+            padding: _buttonPadding(),
+            backgroundColor: _buttonBackgroundColor(isLightTheme),
+          ),
+          child: _contentButton(theme),
+        );
+    }
+  }
+
+  Size _minimumSize() => const Size(Dimens.minimumHeight, Dimens.minimumHeight);
+
+  /// get container of button (image/icon + label)
+  Widget _contentIconButton(ThemeData theme) {
+    final isLightTheme = theme.brightness == Brightness.light;
+
+    return SizedBox(
+      width: Dimens.minimumHeight,
+      height: Dimens.minimumHeight,
+      child: _getIconOrImage(isLightTheme),
     );
   }
 
-  /// Get the inner content of a button
-  Widget _getButtonChild(BuildContext context) {
+  /// get container of button (image/icon + label)
+  Widget _contentButton(ThemeData theme) {
+    final isLightTheme = theme.brightness == Brightness.light;
+
     if (mini) {
-      return SizedBox(
-        width: height ?? 35.0,
-        height: width ?? 35.0,
-        child: _getIconOrImage(),
-      );
+      return _contentIconButton(theme);
     }
-    return Container(
-      constraints: BoxConstraints(
-        maxWidth: width ?? 220,
-      ),
-      child: Center(
-        child: Row(
-          children: <Widget>[
-            Padding(
-              padding: innerPadding ??
-                  const EdgeInsets.symmetric(
-                    horizontal: 13,
-                  ),
-              child: _getIconOrImage(),
-            ),
-            Text(
-              text,
-              style: TextStyle(
-                color: textColor,
-                fontSize: fontSize,
-                backgroundColor: const Color.fromRGBO(0, 0, 0, 0),
+
+    return SizedBox(
+      width: mini ? null : (width ?? Dimens.buttonMinWidth),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _getIconOrImage(isLightTheme),
+          Expanded(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(Dimens.innerPaddingButton),
+                child: Text(
+                  text,
+                  textAlign: TextAlign.center,
+                  style: enabled
+                      ? theme.textTheme.labelLarge?.copyWith(
+                    color: _colorTextAndIcon(isLightTheme),
+                  )
+                      : null,
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
+  Color? _colorTextAndIcon(bool isLightTheme) =>
+      isLightTheme ? lightTextColor : darkTextColor ?? lightTextColor;
+
+  /// get shape
+  RoundedRectangleBorder _buttonShape() => RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(radiusButton),
+  );
+
+  /// get background color
+  Color _buttonBackgroundColor(bool isLightTheme) =>
+      isLightTheme ? lightBackgroundColor : darkBackgroundColor;
+
+  /// get padding
+  EdgeInsets _buttonPadding() => EdgeInsets.all(padding);
+
   /// Get the icon or image widget
-  Widget? _getIconOrImage() {
+  Widget _getIconOrImage(bool isLightTheme) {
+    final image = _getImage(isLightTheme);
     if (image != null) {
-      return image;
+      final imageWidget = Image(
+        image: image,
+        height: imageSize,
+      );
+
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(radiusButton),
+        child: imageWidget,
+      );
     }
-    return Icon(
+
+    final iconWidget = Icon(
       icon,
-      size: 20,
-      color: iconColor,
+      size: Dimens.iconSize,
+      // color: Colors.white,
+      color: enabled ? _colorTextAndIcon(isLightTheme) : null,
     );
+
+    if (mini) {
+      return iconWidget;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        Dimens.innerPaddingButton + 2,
+        Dimens.innerPaddingButton + 2,
+        0,
+        Dimens.innerPaddingButton + 2,
+      ),
+      child: iconWidget,
+    );
+  }
+
+  /// get image light o dark
+  AssetImage? _getImage(bool isLightTheme) {
+    if (imageLightTheme == null && imageDarkTheme == null) {
+      return null;
+    }
+
+    late String image;
+    if (isLightTheme) {
+      image = imageLightTheme ?? imageDarkTheme!;
+    } else {
+      image = imageDarkTheme ?? imageLightTheme!;
+    }
+
+    return AssetImage(image, package: 'sign_in_button');
   }
 }
