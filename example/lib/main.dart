@@ -12,9 +12,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData.light(),
+      theme: ThemeData.light(useMaterial3: true),
+      darkTheme: ThemeData.dark(useMaterial3: true),
+      themeMode: ThemeMode.light, //ThemeMode.dark,
       home: const Scaffold(
-        backgroundColor: Color.fromRGBO(50, 50, 50, 1.0),
         body: SignInPage(),
       ),
       debugShowCheckedModeBanner: false,
@@ -30,7 +31,6 @@ class SignInPage extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('$provider Button Pressed!'),
-        backgroundColor: Colors.black26,
         duration: const Duration(milliseconds: 400),
       ),
     );
@@ -43,87 +43,200 @@ class SignInPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          SignInButtonBuilder(
-            text: 'Get going with Email',
-            icon: Icons.email,
-            onPressed: () {
-              _showButtonPressDialog(context, 'Email');
-            },
-            backgroundColor: Colors.blueGrey[700]!,
-            width: 220.0,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SignInButtonBuilder(
+                text: 'Get going with Email',
+                lightTextColor: const Color(0xFFFFFFFF),
+                icon: Icons.email,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Email');
+                },
+                lightBackgroundColor: Colors.blueGrey[700]!,
+                width: 200.0,
+              ),
+              SignInButtonBuilder(
+                text: 'Get going with Email',
+                lightTextColor: const Color(0xFFFFFFFF),
+                icon: Icons.email,
+                radiusButton: 4,
+                enabled: false,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Email');
+                },
+                lightBackgroundColor: Colors.blueGrey[700]!,
+                width: 200.0,
+              ),
+            ],
           ),
           const Divider(),
-          SignInButton(
-            Buttons.google,
-            onPressed: () {
-              _showButtonPressDialog(context, 'Google');
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SignInButton(
+                SocialButton.google,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Google');
+                },
+              ),
+              SignInButton(
+                SocialButton.google,
+                cornerRadiusButton: 4,
+                enabled: false,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Google');
+                },
+              ),
+            ],
           ),
           const Divider(),
-          SignInButton(
-            Buttons.googleDark,
-            onPressed: () {
-              _showButtonPressDialog(context, 'Google (dark)');
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SignInButton(
+                SocialButton.facebookNew,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'FacebookNew');
+                },
+              ),
+              SignInButton(
+                SocialButton.facebookNew,
+                cornerRadiusButton: 4,
+                enabled: false,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'FacebookNew');
+                },
+              ),
+            ],
           ),
           const Divider(),
-          SignInButton(
-            Buttons.facebookNew,
-            onPressed: () {
-              _showButtonPressDialog(context, 'FacebookNew');
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SignInButton(
+                SocialButton.apple,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Apple');
+                },
+              ),
+              SignInButton(
+                SocialButton.apple,
+                cornerRadiusButton: 4,
+                enabled: false,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Apple');
+                },
+              ),
+            ],
           ),
           const Divider(),
-          SignInButton(
-            Buttons.apple,
-            onPressed: () {
-              _showButtonPressDialog(context, 'Apple');
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SignInButton(
+                SocialButton.gitHub,
+                text: 'Sign up with GitHub',
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Github');
+                },
+              ),
+              SignInButton(
+                SocialButton.gitHub,
+                text: 'Sign up with GitHub',
+                cornerRadiusButton: 4,
+                enabled: false,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Github');
+                },
+              ),
+            ],
           ),
           const Divider(),
-          SignInButton(
-            Buttons.gitHub,
-            text: 'Sign up with GitHub',
-            onPressed: () {
-              _showButtonPressDialog(context, 'Github');
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SignInButton(
+                SocialButton.pinterest,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Github');
+                },
+              ),
+              SignInButton(
+                SocialButton.pinterest,
+                cornerRadiusButton: 4,
+                enabled: false,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Github');
+                },
+              ),
+            ],
           ),
           const Divider(),
-          SignInButton(
-            Buttons.microsoft,
-            text: 'Sign up with Microsoft ',
-            onPressed: () {
-              _showButtonPressDialog(context, 'Microsoft ');
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SignInButton(
+                SocialButton.microsoft,
+                text: 'Sign up with Microsoft ',
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Microsoft ');
+                },
+              ),
+              SignInButton(
+                SocialButton.microsoft,
+                text: 'Sign up with Microsoft ',
+                cornerRadiusButton: 4,
+                enabled: false,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Microsoft ');
+                },
+              ),
+            ],
           ),
           const Divider(),
-          SignInButton(
-            Buttons.twitter,
-            text: 'Use Twitter',
-            onPressed: () {
-              _showButtonPressDialog(context, 'Twitter');
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SignInButton(
+                SocialButton.twitter,
+                text: 'Use Twitter',
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Twitter');
+                },
+              ),
+              SignInButton(
+                SocialButton.twitter,
+                text: 'Use Twitter',
+                cornerRadiusButton: 4,
+                enabled: false,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Twitter');
+                },
+              ),
+            ],
           ),
           const Divider(),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SignInButton(
-                Buttons.linkedIn,
+                SocialButton.linkedIn,
                 mini: true,
                 onPressed: () {
                   _showButtonPressDialog(context, 'LinkedIn (mini)');
                 },
               ),
               SignInButton(
-                Buttons.tumblr,
+                SocialButton.tumblr,
                 mini: true,
+                cornerRadiusButton: 4,
                 onPressed: () {
                   _showButtonPressDialog(context, 'Tumblr (mini)');
                 },
               ),
               SignInButton(
-                Buttons.facebook,
+                SocialButton.facebook,
                 mini: true,
                 onPressed: () {
                   _showButtonPressDialog(context, 'Facebook (mini)');
@@ -132,11 +245,52 @@ class SignInPage extends StatelessWidget {
               SignInButtonBuilder(
                 icon: Icons.email,
                 text: 'Ignored for mini button',
+                lightTextColor: const Color(0xFFFFFFFF),
                 mini: true,
                 onPressed: () {
                   _showButtonPressDialog(context, 'Email (mini)');
                 },
-                backgroundColor: Colors.cyan,
+                lightBackgroundColor: Colors.cyan,
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SignInButton(
+                SocialButton.linkedIn,
+                mini: true,
+                enabled: false,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'LinkedIn (mini)');
+                },
+              ),
+              SignInButton(
+                SocialButton.tumblr,
+                mini: true,
+                enabled: false,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Tumblr (mini)');
+                },
+              ),
+              SignInButton(
+                SocialButton.facebook,
+                mini: true,
+                enabled: false,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Facebook (mini)');
+                },
+              ),
+              SignInButtonBuilder(
+                icon: Icons.email,
+                text: 'Ignored for mini button',
+                lightTextColor: const Color(0xFFFFFFFF),
+                mini: true,
+                enabled: false,
+                onPressed: () {
+                  _showButtonPressDialog(context, 'Email (mini)');
+                },
+                lightBackgroundColor: Colors.cyan,
               ),
             ],
           ),
